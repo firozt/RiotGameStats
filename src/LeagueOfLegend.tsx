@@ -17,17 +17,6 @@ type Data = {
   title : String,
 }
 
-type MatchCache = {
-	values : number[][]
-	last : number
-}
-
-type CacheObj  = {
-	puuid : String,
-	kda : MatchCache,
-	gpm : MatchCache,
-	kills : MatchCache,
-}
 
 const LeagueOfLegend = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -39,14 +28,7 @@ const LeagueOfLegend = () => {
 		
   });
 
-	const check_cache : (name : string, filter : string, games : number) => any = (name,filter,games) => {
 
-	}
-	useEffect(() => {
-		// sessionStorage.setItem(textFi)
-	
-	}, [data])
-	
 
 
 
