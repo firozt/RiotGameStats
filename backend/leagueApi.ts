@@ -27,7 +27,7 @@ async function getMatchIdHistory(puuid: String , games: number=10) : Promise<Str
     })
     .catch((error : any) => {
         console.log(error)
-        return '0'
+        return []
 
     })
     return matchIdHistroy
@@ -52,14 +52,14 @@ async function getMatchData(matchId : String, puuid: String ) : Promise<any> {
 }
 
 async function selectMatchData(matchId : String, puuid : String, props : string[]) : Promise<any> {
-    const output : any= {}
+    let output : any = 0
     const matchData = await getMatchData(matchId,puuid)
     const challenges = matchData.challenges
     props.forEach((prop) => {
         if (matchData.hasOwnProperty(prop)) {
-            output[prop] = matchData[prop]
+            output = matchData[prop]
         } else if (challenges.hasOwnProperty(prop)) {
-            output[prop] = challenges[prop]
+            output = challenges[prop]
         }
     })
     console.log('selected match data success')
@@ -67,19 +67,27 @@ async function selectMatchData(matchId : String, puuid : String, props : string[
 } 
 
 
-export async function graph(games: number=10, name: String, prop: string): Promise<number[][]>{
+export async function graph(games: number=10, name: String, prop: string ): Promise<any>{
     let x_axis : number[] = Array.from({ length: games }, (_, index) => index+1).reverse();
     let y_axis : number[] = []
-    const output : number[][] = [x_axis,y_axis]
+    const values : number[][] = [x_axis,y_axis]
+    let gameData = []
+    const props = ['kills','kda','goldPerMinute']
+
     const puuid : String = await getPUUID(name) // 1 req 
+    if(puuid == '0') {return []}
     const matchIds : String[] = await getMatchIdHistory(puuid,games) // 10 req
-    for(let i = games-1; i >= 0; i--) {
-        const value : any = await selectMatchData(matchIds[i],puuid,[prop])
+    if(matchIds.length == 0) {return []} 
+
+    for (let i = 0; i < games-1; i++) {
+        gameData.push({
+            id : matchIds[i],
+            kills : await selectMatchData(matchIds[i],puuid,['kills']),
+            kda : await selectMatchData(matchIds[i],puuid,['kda']),
+            goldPerMinute : await selectMatchData(matchIds[i],puuid,['goldPerMinute']),
+        })
+        const value : any = await selectMatchData(matchIds[i],puuid,props)
         y_axis.push(value[prop])
     }
-    
-    return output
-
-    const data = await getMatchData(matchIds[0],puuid)
-    return data
+    return [values, gameData]
 }   

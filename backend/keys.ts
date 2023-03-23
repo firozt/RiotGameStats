@@ -1,4 +1,4 @@
 export const keys : { [key: string]: string } = {
-    RIOT_API_KEY :'RGAPI-dde849a7-4311-499f-990b-94a4ac16c614',
+    RIOT_API_KEY :'RGAPI-8c10857b-3fe5-41ea-8756-6b504faf57f8',
 }
 
